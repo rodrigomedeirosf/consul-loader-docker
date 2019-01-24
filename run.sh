@@ -9,9 +9,13 @@ function loadProperties {
 }
 
 function waitConsul {
-    echo '==> Wait consul scale up...'
-    until $(curl -s http://$CONSUL_URL:$CONSUL_PORT/v1/health/state/critical); do
+    echo '==> Wait consul healtly'
+    while true; do
         echo 'Trying to contact the consul agent...'
+        result=$(curl -s http://$CONSUL_URL:$CONSUL_PORT/v1/health/state/critical)
+        if [ $? ] && [ "$result" = "[]" ]; then
+            break;
+        fi
         sleep 1
     done
     echo '==> Consul is running'
